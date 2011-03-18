@@ -1,0 +1,67 @@
+mod_sms_clickatell
+------------------
+
+This module provides and SMS gateway component which uses the Clickatell
+HTTP API to deliver text messages. See clickatell.com for details on their
+services. Note that at present, this is entirely one way: replies will
+either go nowhere or as sms to the source number you specify.
+
+Installation
+------------
+
+Copy in to Prosody's modules directory (e.g. /usr/lib/prosody/modules)
+
+Configuration
+-------------
+
+In prosody.cfg.lua:
+
+Component "sms.example.com" "sms_clickatell"
+	clickatell_api_id = <api id>
+	sms_source_number = <source number>
+	sms_message_prefix = "some text"
+
+The clickatell_api_id is a number which is your Clickatell HTTP API ID. In
+future this will likely be migrated out of config in to component
+registration.
+
+The sms_source_number is the mobile number you want messages to 'originate'
+from i.e. where your recipients see messages coming from. This should really
+be per-user configurable, so again will be moved tp component registration
+in future. The number should be in international format without leading
+plus sign, or you can use some other format if clickatell supports it.
+
+The sms_message_prefix is a piece of text you want prefixing to all messages
+sent through the gateway. For example, I use the prefix "[Via XMPP] " to
+indicate to recipients that I've sent the message via the internet rather
+than the mobile network. Since my primary use case for this component is to
+be able to send messages to people only reachable via mobile when I myself
+only have internet access and no mobile reception, this option allows me to
+give a hint to my recipients that any reply they send may not reach me in a
+timely manner.
+
+Usage
+-----
+
+Once you;ve installed and configured, you should be able to use service
+discovery in your XMPP client to find the component service. Once found, you
+need to register with the service, supplying your Clickatell username and
+password (in future service registration will also include the API ID and
+the source number).
+
+To send text messages to a target number, you need to add a contact in the
+form of <number>@sms.example.com, where <number> is the mobile number of the
+recipient, in international format without leading plus sign, and
+sms.example.com is the name for the component you configured above. For
+example:
+
+447999000001@sms.yourdomain.com
+
+You should then be able to send messages to this contact which get sent as
+text messages to the number by the component. That is all :-)
+
+--
+Phil Stewart
+March 2011
+
+Email: phil.stewart@lichp.co.uk
